@@ -28,7 +28,7 @@ router.get("/:id", (req: Request, res: Response): void => {
   const userId = req.params.id;
 
   if (!/^\d+$/.test(userId)) {
-    res.status(400).send({ success: false, error: "Invalid user ID. It must be a positive number." });
+    res.status(400).send({ success: false, error: "Invalid user ID" });
     return;
   }
 
@@ -53,7 +53,7 @@ router.post("/", (req: Request, res: Response): void => {
     return;
   }
 
-  addUser(name, email, (err) => {
+  addUser(name, email, (err, lastID) => {
     if (err) {
       if (err.message.includes("UNIQUE constraint failed")) {
         res.status(400).send({ success: false, error: "Email already exists" });
@@ -62,7 +62,7 @@ router.post("/", (req: Request, res: Response): void => {
       }
       return;
     }
-    res.json({ success: true, message: "User added successfully" });
+    res.json({ success: true, message: "User added successfully", "data": {"id": lastID} });
   });
 });
 

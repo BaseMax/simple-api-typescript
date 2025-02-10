@@ -6,7 +6,7 @@ export interface User {
   email: string;
 }
 
-const db = new sqlite3.Database("database.sqlite");
+const db: sqlite3.Database = new sqlite3.Database(process.env.NODE_ENV === "test" ? ":memory:" : "database.sqlite");
 
 db.serialize(() => {
   db.run(`
@@ -18,9 +18,9 @@ db.serialize(() => {
   `);
 });
 
-export function addUser(name: string, email: string, callback: (error: Error | null) => void): void {
+export function addUser(name: string, email: string, callback: (error: Error | null, lastId?: number) => void): void {
   db.run("INSERT INTO users (name, email) VALUES (?, ?)", [name, email], function (err) {
-    callback(err);
+    callback(err, this?.lastID);
   });
 }
 
